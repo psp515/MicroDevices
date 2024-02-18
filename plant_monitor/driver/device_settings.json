@@ -1,0 +1,75 @@
+{
+    "baseDeviceTopic":"plantMonitor",
+    "mode": "debug",
+    "Connection":
+    {
+        "Wifi":
+        {
+            "ssid": "your_ssid",
+            "password": "your_password"
+        },
+        "MQTT":
+        {
+            "type" : "HiveMq",
+            "server": "your_mqtt_server",
+            "port": 1883,
+            "user": "your_mqtt_user",
+            "password": "your_mqtt_password",
+            "clientId": "your_client_id",
+            "ssl": false
+        }
+    },
+    "Logs":
+    {
+        "Local":
+        {
+            "localFile": "logs.txt",
+            "level": "info",
+            "enabled": true
+        },
+        "Remote":
+        {
+            "deviceSubtopic": "logs",
+            "level": "error",
+            "enabled": true
+        }
+    },
+    "Devices":
+    {
+        "temperatureSensor":
+        {
+            "type": "DHT11",
+            "dataPin": 2,
+            "groundPin": 3,
+            "vccPin": 4,
+            "treshold": 0.3,
+            "temperatureUnit": "Celcius"
+        },
+        "SoilMoistureSensors":
+        [
+            {
+                "type": "Analog",
+                "dataPin": 0,
+                "vccPin": 5,
+                "groundPin": 6,
+                "treshold":
+                {
+                    "type": "time",
+                    "value": 120,
+                    "unit": "seconds"
+                }
+            },
+            {
+                "type": "Digital",
+                "dataPin": 0,
+                "vccPin": 5,
+                "groundPin": 6,
+                "treshold":
+                {
+                    "type": "value",
+                    "value": 10
+                }
+            }
+        ]
+    }
+}
