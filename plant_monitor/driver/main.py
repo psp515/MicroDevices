@@ -2,7 +2,7 @@ from machine import reset
 from loggers.logger_factory import LoggerFactory
 from features.configuration.configuration import Configuration
 from features.network_connection.wifi_connector import WiFiConnection
-from features.clients.client_factory import MqttFactory
+from features.mqtt_clients.mqtt_client_factory import MqttFactory
 
 import gc
 import ujson
@@ -52,8 +52,6 @@ if __name__ == '__main__':
     try:
         mqtt_config = config.connection.mqtt
         mqtt_client = MqttFactory(mqtt_config).create()
-        
-
     except:
         pass
 

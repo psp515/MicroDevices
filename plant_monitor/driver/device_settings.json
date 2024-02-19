@@ -17,7 +17,8 @@
             "user": "your_mqtt_user",
             "password": "your_mqtt_password",
             "clientId": "your_client_id",
-            "ssl": false
+            "ssl": false,
+            "keepAlive": 60
         }
     },
     "Logs":

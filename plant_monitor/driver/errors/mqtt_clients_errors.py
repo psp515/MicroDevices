@@ -1,0 +1,3 @@
+
+class InvalidMqttProviderException(BaseException):
+    pass

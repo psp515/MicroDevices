@@ -32,6 +32,7 @@ class Mqtt:
         self.password = mqtt_data.get("password")
         self.client_id = mqtt_data.get("clientId")
         self.ssl = mqtt_data.get("ssl")
+        self.keep_alive = mqtt_data.get("keepAlive")
 
 
 class Logs:
