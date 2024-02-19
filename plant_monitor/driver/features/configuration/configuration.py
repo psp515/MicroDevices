@@ -50,12 +50,13 @@ class LogType:
 
 class Devices:
     def __init__(self, devices_data):
-        self.temperature_sensor = Device(devices_data.get("temperatureSensor", {}))
-        self.soil_moisture_sensors = [Device(sensor_data) for sensor_data in devices_data.get("SoilMoistureSensors", [])]
+        self.temperature_sensor = DeviceConfiguration(devices_data.get("temperatureSensor", {}))
+        self.soil_moisture_sensors = [DeviceConfiguration(sensor_data) for sensor_data in devices_data.get("SoilMoistureSensors", [])]
 
 
-class Device:
+class DeviceConfiguration:
     def __init__(self, device_data):
+        self.id = device_data.get("id")
         self.type = device_data.get("type")
         self.data_pin = device_data.get("dataPin")
         self.ground_pin = device_data.get("groundPin")

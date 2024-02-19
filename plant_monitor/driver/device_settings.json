@@ -40,6 +40,7 @@
     {
         "temperatureSensor":
         {
+            "Id": 1,
             "type": "DHT11",
             "dataPin": 2,
             "groundPin": 3,
@@ -54,6 +55,7 @@
         "SoilMoistureSensors":
         [
             {
+                "Id": 2,
                 "type": "Analog",
                 "dataPin": 0,
                 "vccPin": 5,
@@ -66,6 +68,7 @@
                 }
             },
             {
+                "Id": 3,
                 "type": "Digital",
                 "dataPin": 0,
                 "vccPin": 5,

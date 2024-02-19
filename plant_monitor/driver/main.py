@@ -3,6 +3,7 @@ from loggers.logger_factory import LoggerFactory
 from features.configuration.configuration import Configuration
 from features.network_connection.wifi_connector import WiFiConnection
 from features.mqtt_clients.mqtt_client_factory import MqttClientFactory
+from application import App
 
 import gc
 import ujson
@@ -23,6 +24,7 @@ if __name__ == '__main__':
     logger = LoggerFactory.default_logger()
     config = None
     mqtt_client = None
+    devices = None
     app = None
 
     logger.log_info("Starting parsing configuration.")
@@ -39,7 +41,6 @@ if __name__ == '__main__':
         # TODO: Update Logger
     except Exception as e:
         logger.log_error(f"Invalid configuration. Please fix configuration. Exception: {str(e)}")
-        logger.log_debug(config_data)
         sys.exit(1)
 
     connection = WiFiConnection(config.connection.wifi, logger)
@@ -52,27 +53,22 @@ if __name__ == '__main__':
         mqtt_client = MqttClientFactory(config, logger).create()
         mqtt_client.connect()
     except Exception as e:
-        logger.log_error(f"Failed to start mqtt client {e}")
+        logger.log_debug(f"Failed to start mqtt client {e}")
         setup_fail(f"Failed to connect with mqtt broker: {config.connection.mqtt.server}.", 3)
 
-"""
-        
     try:
         # Configure Devices
         pass
-    except:
-        pass
+    except Exception as e:
+        logger.log_debug(f"Failed to configure devices {e}")
+        setup_fail(f"Failed to configure devices: {config.devices}.", 3)
 
     try:
-        # Run Application
-        pass
+        application = App(devices, config, connection, mqtt_client, logger)
+        application.start()
     except OSError as e:
         logger.log_error(str(e))
     except BaseException as e:
         logger.log_error(str(e))
     finally:
-        pass
-        #if not DEBUG:
-        #    sleep(3)
-        #    reset()
-"""
+        setup_fail("Device unexpectedly leaved main loop.", 4)

@@ -16,6 +16,9 @@ class MqttClient:
     def _callback(self, topic, message):
         self._logger.log_info(f"Fake callback from MQTT Broker.")
 
+    def update(self):
+        self._client.check_msg()
+
     def connect(self):
         self._logger.log_info(f"Fake connect to MQTT Broker.")
 

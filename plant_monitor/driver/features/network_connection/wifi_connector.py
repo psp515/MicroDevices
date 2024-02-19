@@ -13,6 +13,9 @@ class WiFiConnection:
         self._logger = logger
         self._wlan = network.WLAN(network.STA_IF)
 
+    def is_connected(self):
+        return self._wlan.isconnected()
+
     def connect(self):
         self._wlan.active(True)
         self._wlan.connect(self._ssid, self._password)
