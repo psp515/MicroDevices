@@ -1,18 +1,29 @@
-from loggers.logger import Logger
-from loggers.logger import LoggerLevels
+from machine import reset
+from loggers.logger_factory import LoggerFactory
 from features.configuration.configuration import Configuration
+from features.network_connection.wifi_connector import WiFiConnection
+from features.clients.client_factory import MqttFactory
 
 import gc
 import ujson
 import sys
+import globals
+
+
+def setup_fail(message: str, debug_message: str):
+    logger.log_error(message)
+    if config.mode == globals.DEBUG:
+        logger.log_debug("")
+        sys.exit(2)
+    reset()
+
 
 if __name__ == '__main__':
     gc.collect()
 
-    logger = Logger(LoggerLevels.DEBUG)
+    logger = LoggerFactory.default_logger()
     config = None
-    connection = None
-    connectionMqtt = None
+    mqtt_client = None
     app = None
 
     logger.log_info("Starting parsing configuration.")
@@ -22,43 +33,34 @@ if __name__ == '__main__':
             json_file = file.read()
 
         config_data = ujson.loads(json_file)
+        # TODO: Add validation to configuration
         config = Configuration(config_data)
+
+        logger.log_info("Finished parsing configuration. Updating logger.")
+        # TODO: Update Logger
     except Exception as e:
-        logger.log_error(str(e))
+        logger.log_error(f"Invalid configuration. Please fix configuration. Exception: {str(e)}")
+        logger.log_debug(config_data)
         sys.exit(1)
 
-    logger.log_info("Finished parsing configuration. Updating logger")
+    connection = WiFiConnection(config.connection.wifi, logger)
+    result = connection.connect()
+
+    if not result:
+        setup_fail(f"Failed to connect with ssid: {config.connection.wifi.ssid}.")
+
+    try:
+        mqtt_config = config.connection.mqtt
+        mqtt_client = MqttFactory(mqtt_config).create()
+        
+
+    except:
+        pass
 
 """
-    try:
-        # TODO when starting try to establish blt connection to update configuration
-        pass
-    except:
-        pass
-
+        
     try:
         # Configure Devices
-        pass
-    except:
-        pass
-
-    try:
-        #wlan_config = read_json("config/secrets.json")
-        #validate_wlan_config(wlan_config)
-        #wlan = network.WLAN(network.STA_IF)
-        #wlan.active(True)
-        #wlan.connect(wlan_config["ssid"], wlan_config["password"])
-        #wait_for_connection(wlan, logger)
-        pass
-    except:
-        pass
-
-    try:
-        #hivemq_config = read_json("config/hivemq.json")
-        #validate_hivemq_config(hivemq_config)
-        #mqtt_client = HivemqMQTTClient(hivemq_config, logger, device_state)
-        #mqtt_client.connect()
-        #mqtt_topics = configure_mqtt(mqtt_client)
         pass
     except:
         pass

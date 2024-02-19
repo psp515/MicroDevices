@@ -6,7 +6,8 @@
         "Wifi":
         {
             "ssid": "your_ssid",
-            "password": "your_password"
+            "password": "your_password",
+            "maxConnectionTime": 15
         },
         "MQTT":
         {
@@ -23,7 +24,7 @@
     {
         "Local":
         {
-            "localFile": "logs.txt",
+            "localFile": "logs_*.txt",
             "level": "info",
             "enabled": true
         },
@@ -42,8 +43,12 @@
             "dataPin": 2,
             "groundPin": 3,
             "vccPin": 4,
-            "treshold": 0.3,
-            "temperatureUnit": "Celcius"
+            "threshold":
+            {
+                "type": "degrees",
+                "value": 1,
+                "unit": "Celcius"
+            }
         },
         "SoilMoistureSensors":
         [
@@ -52,7 +57,7 @@
                 "dataPin": 0,
                 "vccPin": 5,
                 "groundPin": 6,
-                "treshold":
+                "threshold":
                 {
                     "type": "time",
                     "value": 120,
@@ -64,7 +69,7 @@
                 "dataPin": 0,
                 "vccPin": 5,
                 "groundPin": 6,
-                "treshold":
+                "threshold":
                 {
                     "type": "value",
                     "value": 10
