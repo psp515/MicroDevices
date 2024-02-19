@@ -1,4 +1,4 @@
-from logger import Logger
+from loggers.logger import Logger
 from enums.logger_levels import LoggerLevels
 from features.configuration.configuration import Logs
 

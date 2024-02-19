@@ -10,7 +10,7 @@ class WiFiConnection:
     def __init__(self, wifi_connection: WiFi, logger: Logger):
         self._ssid = wifi_connection.ssid
         self._password = wifi_connection.password
-        self._logger = Logger
+        self._logger = logger
         self._wlan = network.WLAN(network.STA_IF)
 
     def connect(self):
@@ -36,7 +36,7 @@ class WiFiConnection:
 
         status_description = self.get_status_description(status)
         message = f"Connected. Status: {status}, means {status_description}."
-        self._logger.log_warning(message)
+        self._logger.log_info(message)
         return True
 
     @staticmethod

@@ -2,7 +2,7 @@ from machine import reset
 from loggers.logger_factory import LoggerFactory
 from features.configuration.configuration import Configuration
 from features.network_connection.wifi_connector import WiFiConnection
-from features.mqtt_clients.mqtt_client_factory import MqttFactory
+from features.mqtt_clients.mqtt_client_factory import MqttClientFactory
 
 import gc
 import ujson
@@ -10,11 +10,10 @@ import sys
 import globals
 
 
-def setup_fail(message: str, debug_message: str):
+def setup_fail(message: str, error_code: int):
     logger.log_error(message)
     if config.mode == globals.DEBUG:
-        logger.log_debug("")
-        sys.exit(2)
+        sys.exit(error_code)
     reset()
 
 
@@ -47,13 +46,14 @@ if __name__ == '__main__':
     result = connection.connect()
 
     if not result:
-        setup_fail(f"Failed to connect with ssid: {config.connection.wifi.ssid}.")
+        setup_fail(f"Failed to connect with ssid: {config.connection.wifi.ssid}.", 2)
 
     try:
-        mqtt_config = config.connection.mqtt
-        mqtt_client = MqttFactory(mqtt_config).create()
-    except:
-        pass
+        mqtt_client = MqttClientFactory(config, logger).create()
+        mqtt_client.connect()
+    except Exception as e:
+        logger.log_error(f"Failed to start mqtt client {e}")
+        setup_fail(f"Failed to connect with mqtt broker: {config.connection.mqtt.server}.", 3)
 
 """
         

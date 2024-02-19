@@ -3,12 +3,12 @@ from features.mqtt_clients.base_client import MqttClient
 from features.configuration.configuration import Mqtt
 from loggers.logger import Logger
 
-import uasyncio
-
 
 class HiveMqMqttClient(MqttClient):
     def __init__(self, base_device_topic: str, config: Mqtt, logger: Logger):
         super().__init__(base_device_topic, config, logger)
+
+        self._subscribed = []
 
         self._client = MQTTClient(
             client_id=self._config.client_id,
@@ -22,19 +22,23 @@ class HiveMqMqttClient(MqttClient):
 
         self._client.set_callback(self._callback)
 
-    async def connect(self):
-        self._logger.log_info(f"Connecting to broker: {self._config.client_id}")
-        self._client.connect()
-        self._logger.log_debug(f"Connected to broker: {self._config.client_id}")
-
+    def subscribe_provided_topics(self):
         for topic in self._callbacks.keys():
+            if topic in self._subscribed:
+                continue
             formatted_topic = self._format_topic(topic)
             self._client.subscribe(formatted_topic)
             self._logger.log_debug(f"Subscribed to topic: {formatted_topic}")
 
-        self._logger.log_info(f"Successfully connected to broker: {self._config.client_id}")
+            self._subscribed.append(topic)
 
-    async def _callback(self, topic, message):
+    def connect(self):
+        self._logger.log_info(f"Connecting to broker: {self._config.client_id}")
+        self._client.connect()
+        self.subscribe_provided_topics()
+        self._logger.log_info(f"Successfully connected to broker with client_id: {self._config.client_id}")
+
+    def _callback(self, topic, message):
         try:
             topic = topic.decode("utf-8")
             data = message.decode("utf-8")
@@ -52,7 +56,7 @@ class HiveMqMqttClient(MqttClient):
             self._logger.log_info(f"Data from topic '{topic}' received. ")
             self._logger.log_debug(f"Received Topic: '{topic}' Payload: {data}. ")
 
-    async def publish(self, topic, message):
+    def publish(self, topic, message):
         self._client.publish(topic, message)
         self._logger.log_info(f"Published data on topic {topic}")
         self._logger.log_debug(f"Sending Topic: '{topic}' Payload: {message}. ")
