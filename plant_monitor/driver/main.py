@@ -57,7 +57,9 @@ if __name__ == '__main__':
         setup_fail(f"Failed to connect with mqtt broker: {config.connection.mqtt.server}.", 3)
 
     try:
-        # Configure Devices
+
+        tem
+
         pass
     except Exception as e:
         logger.log_debug(f"Failed to configure devices {e}")

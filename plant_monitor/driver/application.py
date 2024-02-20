@@ -4,7 +4,7 @@ from features.network_connection.wifi_connector import WiFiConnection
 from features.mqtt_clients.base_client import MqttClient
 from loggers.logger import Logger
 
-from utime import sleep, ticks_ms, ticks_diff, sleep_ms
+from utime import sleep, sleep_ms
 
 
 class App:
@@ -29,11 +29,10 @@ class App:
         while True:
             if self.connection.is_connected():
                 self.mqtt.update()
+                sleep_ms(100)
             else:
                 self._logger.log_warning("Device disconnected from internet.")
                 sleep(1)
-
-            sleep_ms(100)
 
     def _device_loop(self):
         while True:
