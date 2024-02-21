@@ -60,12 +60,12 @@ if __name__ == '__main__':
 
     try:
         logger.log_debug(f"Configuring temperature device: {config.devices.temperature_sensor.id}")
-        temperature_sensor = TemperatureSensorFactory(config, mqtt_client).create()
+        temperature_sensor = TemperatureSensorFactory(config, mqtt_client, logger).create()
         devices.append(temperature_sensor)
 
         for device_config in config.devices.soil_moisture_sensors:
             logger.log_debug(f"Configuring soil moisture device: {device_config.id}")
-            soil_moisture_sensor = SoilMoistureSensorFactory(config, device_config, mqtt_client).create()
+            soil_moisture_sensor = SoilMoistureSensorFactory(config, device_config, mqtt_client, logger).create()
             devices.append(soil_moisture_sensor)
 
     except Exception as e:

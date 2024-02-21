@@ -18,6 +18,7 @@ class WiFiConnection:
 
     def connect(self):
         self._wlan.active(True)
+        self._logger.log_debug(f"Ssid: {self._ssid}, Password: {self._password}")
         self._wlan.connect(self._ssid, self._password)
 
         sleep(1)
@@ -57,3 +58,4 @@ class WiFiConnection:
         elif status == network.STAT_GOT_IP:
             return "Connection successful"
         return "Unknown"
+

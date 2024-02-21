@@ -25,13 +25,19 @@ class DHT11(Device):
 
     def loop(self):
         try:
+            self.logger.log_info("Starting loop of dht11 sensor.")
             self._sensor.measure()
             temp = self._sensor.temperature()
             humidity = self._sensor.humidity()
 
+            self.logger.log_debug(f"Measured temp: {temp}, hum: {humidity}.")
+
             if self.push_next or self._should_update_temp(temp) or self._should_update_humidity(humidity):
+                self.logger.log_debug(f"Updating dht11 data.")
                 payload = self._create_payload(temp, humidity)
-                self.client.publish(self.update_config_topic, payload)
+                topic = self.device_config.update_topic
+                self.logger.log_debug(f"Topic: {topic} Payload: {payload}")
+                self.mqtt_client.publish(topic, payload)
                 self.push_next = False
 
         except BaseException as e:
@@ -39,6 +45,10 @@ class DHT11(Device):
             self.logger.log_error(f"Dht11 sensor with id {self.id} unexpectedly failed.")
 
     def _should_update_humidity(self, humidity):
+        if self._humidity is None:
+            self._humidity = humidity
+            return True
+
         if self.device_config.hum_threshold.type == "percent":
             if abs(self._humidity - humidity) > self.device_config.hum_threshold.value:
                 self._humidity = humidity
@@ -47,6 +57,10 @@ class DHT11(Device):
         return False
 
     def _should_update_temp(self, temp):
+        if self._temp is None:
+            self._temp = temp
+            return True
+
         if self.device_config.temp_threshold.type == "degrees":
             if abs(self._temp - temp) > self.device_config.temp_threshold.value:
                 self._temp = temp
@@ -56,11 +70,14 @@ class DHT11(Device):
 
     def _create_payload(self, temp, humidity):
         temp_unit = self.device_config.temp_threshold.unit
+        self.logger.log_debug(f"DHT11 temp unit: {temp_unit}")
 
         if temp_unit == "F":
             temp = self.celsius_to_fahrenheit(temp)
         elif temp_unit == "K":
             temp = self.celsius_to_kelvin(temp)
+
+        self.logger.log_debug(f"Updated temp: {temp}")
 
         data = {
             "device": self.device_config.id,
@@ -68,12 +85,13 @@ class DHT11(Device):
                 "value": temp,
                 "unit": temp_unit
             },
-
             "humidity": {
                 "value": humidity,
                 "unit": self.device_config.hum_threshold.unit
             }
         }
+
+        self.logger.log_debug(f"Formatted payload: {data}")
 
         return ujson.dumps(data)
 

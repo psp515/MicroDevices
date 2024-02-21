@@ -11,7 +11,7 @@ class Device:
                  logger: Logger):
         self.config = config
         self.device_config = device_config
-        self.client = mqtt_client
+        self.mqtt_client = mqtt_client
         self.logger = logger
         self.push_next = False
 

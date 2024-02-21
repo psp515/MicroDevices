@@ -64,13 +64,20 @@ class DeviceConfiguration:
         self.vcc_pin = device_data.get("vccPin")
         self.threshold = Threshold(device_data.get("threshold", {}))
         self.topic = device_data.get("topic")
-        self.update_topic = device_data.get("update_topic")
+        self.update_topic = device_data.get("updateTopic")
 
 
 class TemperatureDeviceConfiguration(DeviceConfiguration):
     def __init__(self, device_data):
-        super().__init__(device_data)
-        self.hum_threshold = Threshold(device_data.get("tempThreshold", {}))
+        self.id = device_data.get("id")
+        self.type = device_data.get("type")
+        self.data_pin = device_data.get("dataPin")
+        self.ground_pin = device_data.get("groundPin")
+        self.vcc_pin = device_data.get("vccPin")
+        self.threshold = Threshold(device_data.get("threshold", {}))
+        self.topic = device_data.get("topic")
+        self.update_topic = device_data.get("updateTopic")
+        self.hum_threshold = Threshold(device_data.get("humThreshold", {}))
         self.temp_threshold = Threshold(device_data.get("tempThreshold", {}))
 
 

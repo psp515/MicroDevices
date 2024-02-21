@@ -56,7 +56,9 @@ class HiveMqMqttClient(MqttClient):
             self._logger.log_info(f"Data from topic '{topic}' received. ")
             self._logger.log_debug(f"Received Topic: '{topic}' Payload: {data}. ")
 
-    def publish(self, topic, message):
-        self._client.publish(topic, message)
+    def publish(self, topic, payload):
+        payload_bytes = payload.encode('utf-8')
+        topic_bytes = topic.encode('utf-8')
+        self._client.publish(topic_bytes, payload_bytes)
         self._logger.log_info(f"Published data on topic {topic}")
-        self._logger.log_debug(f"Sending Topic: '{topic}' Payload: {message}. ")
+        self._logger.log_debug(f"Sending Topic: '{topic}' Payload: {payload}. ")

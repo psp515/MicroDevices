@@ -36,9 +36,8 @@ class App:
 
     def _device_loop(self):
         while True:
-            self._logger.log_debug("Starting device iteration.")
+            self._logger.log_debug("Starting device iterations.")
             for device in self.devices:
                 device.loop()
-                self._logger.log_debug(f"Finished iteration for device: {device.id}")
-            self._logger.log_debug("Finished device iteration.")
-            sleep_ms(1)
+            self._logger.log_debug("Finished device iterations.")
+            sleep_ms(1000)

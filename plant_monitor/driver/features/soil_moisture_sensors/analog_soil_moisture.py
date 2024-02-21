@@ -17,11 +17,15 @@ class AnalogSoilMoistureSensor(Device):
 
     def loop(self):
         try:
+            self.logger.log_info("Starting loop of sms analog sensor.")
             moisture = self._calculate_moisture()
 
             if self.push_next or self._should_update_moisture(moisture):
+                self.logger.log_debug("Sending update message in sms analog sensor.")
                 payload = self._create_payload(moisture)
-                self.client.publish(self.update_config_topic, payload)
+                topic = self.device_config.topic
+                self.logger.log_debug(f"Topic: {topic} Payload: {payload}")
+                self.mqtt_client.publish(self.update_config_topic, payload)
                 self.push_next = False
 
         except BaseException as e:
@@ -40,8 +44,12 @@ class AnalogSoilMoistureSensor(Device):
         return ujson.dumps(data)
 
     def _should_update_moisture(self, moisture):
+        if self.device_config.threshold.type is None:
+            self._last_moisture = moisture
+            return True
+
         if self.device_config.threshold.type == "percent":
-            if abs(self._last_moisture - moisture) > self.device_config.temp_threshold.value:
+            if abs(self._last_moisture - moisture) > self.device_config.threshold.value:
                 self._last_moisture = moisture
                 return True
 
