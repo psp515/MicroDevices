@@ -2,7 +2,7 @@ class LoggerLevels:
     INFO = 0
     WARNING = 1
     ERROR = 2
-    DEBUG = 3
+    DEBUG = -1
 
 
 def to_logger_level(level: str):

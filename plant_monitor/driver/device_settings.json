@@ -1,5 +1,5 @@
 {
-    "baseDeviceTopic":"plantMonitor",
+    "baseDeviceTopic":"plantMonitor/",
     "mode": "debug",
     "Connection":
     {
@@ -26,12 +26,6 @@
         "Local":
         {
             "localFile": "logs_*.txt",
-            "level": "info",
-            "enabled": true
-        },
-        "Remote":
-        {
-            "deviceSubtopic": "logs",
             "level": "error",
             "enabled": true
         }
@@ -41,43 +35,41 @@
         "temperatureSensor":
         {
             "Id": 1,
-            "type": "DHT11",
-            "dataPin": 2,
-            "groundPin": 3,
-            "vccPin": 4,
-            "threshold":
+            "type": "dht11",
+            "dataPin": 0,
+            "groundPin": 38,
+            "vccPin": 36,
+            "tempThreshold":
             {
                 "type": "degrees",
                 "value": 1,
-                "unit": "Celcius"
-            }
+                "defaultUnit": "C"
+            },
+            "c":
+            {
+                "type": "percent",
+                "value": 1,
+                "defaultUnit": "%"
+            },
+            "topic": "temperature",
+            "updateTopic": "temperature/update"
         },
         "SoilMoistureSensors":
         [
             {
                 "Id": 2,
-                "type": "Analog",
-                "dataPin": 0,
-                "vccPin": 5,
-                "groundPin": 6,
+                "type": "analog",
+                "dataPin": 1,
+                "groundPin": 38,
+                "vccPin": 36,
                 "threshold":
                 {
-                    "type": "time",
-                    "value": 120,
-                    "unit": "seconds"
-                }
-            },
-            {
-                "Id": 3,
-                "type": "Digital",
-                "dataPin": 0,
-                "vccPin": 5,
-                "groundPin": 6,
-                "threshold":
-                {
-                    "type": "value",
-                    "value": 10
-                }
+                    "type": "percent",
+                    "value": 2,
+                    "unit": "%"
+                },
+                "topic": "sms/analog",
+                "updateTopic": "sms/analog/update"
             }
         ]
     }

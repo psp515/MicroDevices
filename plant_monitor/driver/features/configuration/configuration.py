@@ -1,3 +1,4 @@
+import json
 
 
 class Configuration:
@@ -49,7 +50,7 @@ class LogType:
 
 class Devices:
     def __init__(self, devices_data):
-        self.temperature_sensor = DeviceConfiguration(devices_data.get("temperatureSensor", {}))
+        self.temperature_sensor = TemperatureDeviceConfiguration(devices_data.get("temperatureSensor", {}))
         soil_sensors = [DeviceConfiguration(sensor_data) for sensor_data in devices_data.get("SoilMoistureSensors", [])]
         self.soil_moisture_sensors = soil_sensors
 
@@ -63,6 +64,14 @@ class DeviceConfiguration:
         self.vcc_pin = device_data.get("vccPin")
         self.threshold = Threshold(device_data.get("threshold", {}))
         self.topic = device_data.get("topic")
+        self.update_topic = device_data.get("update_topic")
+
+
+class TemperatureDeviceConfiguration(DeviceConfiguration):
+    def __init__(self, device_data):
+        super().__init__(device_data)
+        self.hum_threshold = Threshold(device_data.get("tempThreshold", {}))
+        self.temp_threshold = Threshold(device_data.get("tempThreshold", {}))
 
 
 class Threshold:

@@ -3,6 +3,8 @@ from loggers.logger_factory import LoggerFactory
 from features.configuration.configuration import Configuration
 from features.network_connection.wifi_connector import WiFiConnection
 from features.mqtt_clients.mqtt_client_factory import MqttClientFactory
+from features.temperature_sensor.temperature_sensor_factory import TemperatureSensorFactory
+from features.soil_moisture_sensors.soil_moinsture_sensor_factory import SoilMoistureSensorFactory
 from application import App
 
 import gc
@@ -24,7 +26,7 @@ if __name__ == '__main__':
     logger = LoggerFactory.default_logger()
     config = None
     mqtt_client = None
-    devices = None
+    devices = []
     app = None
 
     logger.log_info("Starting parsing configuration.")
@@ -57,10 +59,15 @@ if __name__ == '__main__':
         setup_fail(f"Failed to connect with mqtt broker: {config.connection.mqtt.server}.", 3)
 
     try:
+        logger.log_debug(f"Configuring temperature device: {config.devices.temperature_sensor.id}")
+        temperature_sensor = TemperatureSensorFactory(config, mqtt_client).create()
+        devices.append(temperature_sensor)
 
-        tem
+        for device_config in config.devices.soil_moisture_sensors:
+            logger.log_debug(f"Configuring soil moisture device: {device_config.id}")
+            soil_moisture_sensor = SoilMoistureSensorFactory(config, device_config, mqtt_client).create()
+            devices.append(soil_moisture_sensor)
 
-        pass
     except Exception as e:
         logger.log_debug(f"Failed to configure devices {e}")
         setup_fail(f"Failed to configure devices: {config.devices}.", 3)

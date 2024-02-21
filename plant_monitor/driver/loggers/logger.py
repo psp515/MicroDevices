@@ -7,26 +7,22 @@ class Logger:
         self.level = level
 
     def log_info(self, message: str):
-        if self.level >= LoggerLevels.INFO:
-            data = self._format_message(LoggerLevels.INFO, message)
-            print(data)
+        data = self._format_message(LoggerLevels.INFO, message)
+        print(data)
 
     def log_warning(self, message: str):
-        if self.level >= LoggerLevels.WARNING:
-            data = self._format_message(LoggerLevels.WARNING, message)
-            print(data)
+        data = self._format_message(LoggerLevels.WARNING, message)
+        print(data)
 
     def log_error(self, message: str):
-        if self.level >= LoggerLevels.ERROR:
-            data = self._format_message(LoggerLevels.ERROR, message)
-            print(data)
+        data = self._format_message(LoggerLevels.ERROR, message)
+        print(data)
 
     def log_debug(self, message: str):
-        if self.level >= LoggerLevels.DEBUG:
+        if self.level == LoggerLevels.DEBUG:
             data = self._format_message(LoggerLevels.DEBUG, message)
             print(data)
 
     @staticmethod
     def _format_message(level: LoggerLevels, message: str):
         return f'{level} {from_logger_level(level)} {message}'
-
