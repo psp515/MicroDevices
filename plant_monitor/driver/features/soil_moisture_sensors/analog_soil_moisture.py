@@ -44,7 +44,7 @@ class AnalogSoilMoistureSensor(Device):
         return ujson.dumps(data)
 
     def _should_update_moisture(self, moisture):
-        if self.device_config.threshold.type is None:
+        if self._last_moisture is None:
             self._last_moisture = moisture
             return True
 
