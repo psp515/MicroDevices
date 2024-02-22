@@ -6,10 +6,12 @@ from features.mqtt_clients.base_client import MqttClient
 from loggers.logger import Logger
 import machine
 import dht
-import time
+from utime import ticks_ms, ticks_diff
 
 
 class DHT11(Device):
+
+    DHT_READ_SPAN = 2000
 
     def __init__(self,
                  config: Configuration,
@@ -22,9 +24,16 @@ class DHT11(Device):
         self._sensor = dht.DHT11(dht_pin)
         self._humidity = None
         self._temp = None
+        self._last_read = ticks_ms()
 
     def loop(self):
         try:
+            current_time = ticks_ms()
+            if abs(ticks_diff(current_time, self._last_read)) < DHT11.DHT_READ_SPAN:
+                return
+
+            self._last_read = current_time
+
             self.logger.log_info("Starting loop of dht11 sensor.")
             self._sensor.measure()
             temp = self._sensor.temperature()
