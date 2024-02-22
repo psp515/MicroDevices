@@ -4,10 +4,14 @@ import json
 class Configuration:
     def __init__(self, config_data):
         self.mode = config_data.get("mode")
+        self.debug_break = config_data.get("debug_break")
         self.base_device_topic = config_data.get("baseDeviceTopic")
         self.connection = Connection(config_data.get("Connection", {}))
         self.logs = Logs(config_data.get("Logs", {}))
         self.devices = Devices(config_data.get("Devices", {}))
+
+    def is_debug(self):
+        return self.mode == "debug"
 
 
 class Connection:
@@ -51,8 +55,8 @@ class LogType:
 class Devices:
     def __init__(self, devices_data):
         self.temperature_sensor = TemperatureDeviceConfiguration(devices_data.get("temperatureSensor", {}))
-        soil_sensors = [DeviceConfiguration(sensor_data) for sensor_data in devices_data.get("SoilMoistureSensors", [])]
-        self.soil_moisture_sensors = soil_sensors
+        soli_data = devices_data.get("SoilMoistureSensors", [])
+        self.soil_moisture_sensors = [DeviceConfiguration(sensor_data) for sensor_data in soli_data]
 
 
 class DeviceConfiguration:
