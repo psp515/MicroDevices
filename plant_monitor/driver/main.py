@@ -54,6 +54,15 @@ if __name__ == '__main__':
     try:
         mqtt_client = MqttClientFactory(config, logger).create()
         mqtt_client.connect()
+
+        if config.is_debug():
+
+            test_data = {
+                "test": "test"
+            }
+            payload = ujson.dumps(test_data)
+            mqtt_client.publish("connection/test/topic", test_data)
+
     except Exception as e:
         logger.log_debug(f"Failed to start mqtt client {e}")
         setup_fail(f"Failed to connect with mqtt broker: {config.connection.mqtt.server}.", 3)
