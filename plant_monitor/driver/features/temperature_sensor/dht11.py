@@ -44,8 +44,7 @@ class DHT11(Device):
             if self.push_next or self._should_update_temp(temp) or self._should_update_humidity(humidity):
                 self.logger.log_debug(f"Updating dht11 data.")
                 payload = self._create_payload(temp, humidity)
-                topic = self.device_config.update_topic
-                self.logger.log_debug(f"Topic: {topic} Payload: {payload}")
+                topic = self.device_config.topic
                 self.mqtt_client.publish(topic, payload)
                 self.push_next = False
 

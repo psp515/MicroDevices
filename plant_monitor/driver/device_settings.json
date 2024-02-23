@@ -34,7 +34,7 @@
     {
         "temperatureSensor":
         {
-            "Id": 1,
+            "id": 1,
             "type": "dht11",
             "dataPin": 0,
             "groundPin": 38,
@@ -57,7 +57,7 @@
         "SoilMoistureSensors":
         [
             {
-                "Id": 2,
+                "id": 2,
                 "type": "analog",
                 "dataPin": 1,
                 "groundPin": 38,

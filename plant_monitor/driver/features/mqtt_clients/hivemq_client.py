@@ -58,6 +58,7 @@ class HiveMqMqttClient(MqttClient):
 
     def publish(self, topic, payload):
         payload_bytes = payload.encode('utf-8')
+        topic = self._format_topic(topic)
         topic_bytes = topic.encode('utf-8')
         self._client.publish(topic_bytes, payload_bytes)
         self._logger.log_info(f"Published data on topic {topic}")
