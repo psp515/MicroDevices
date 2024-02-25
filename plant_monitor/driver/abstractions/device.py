@@ -26,6 +26,9 @@ class Device:
     def update_config(self, data):
         pass
 
+    def get_subscriptions(self):
+        return []
+
     def push_newest_data(self):
         self.push_next = True
 

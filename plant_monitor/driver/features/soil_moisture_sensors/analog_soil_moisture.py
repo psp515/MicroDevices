@@ -4,7 +4,7 @@ from features.mqtt_clients.base_client import MqttClient
 from loggers.logger import Logger
 import machine
 import ujson
-from utime import ticks_ms, ticks_diff
+from utime import ticks_ms, ticks_diff, sleep_ms, gmtime
 
 
 class AnalogSoilMoistureSensor(Device):
@@ -16,17 +16,22 @@ class AnalogSoilMoistureSensor(Device):
         self._adc = machine.ADC(device_config.data_pin)
         self._last_moisture = None
         self._last_read = ticks_ms()
+        self._last_watering = None
 
     def loop(self):
         try:
             self.logger.log_info("Starting loop of sms analog sensor.")
             moisture = self._calculate_moisture()
-
+            prev = self._last_moisture
             if self.push_next or self._should_update_moisture(moisture):
+
+                if abs(prev - self._last_moisture) > 30:
+                    self._last_watering = f"{gmtime()}"
+
                 self.logger.log_debug("Sending update message in sms analog sensor.")
                 payload = self._create_payload(moisture)
                 topic = self.device_config.topic
-                self.mqtt_client.publish(self.device_config.topic, payload)
+                self.mqtt_client.publish(topic, payload)
                 self.push_next = False
 
         except BaseException as e:
@@ -49,12 +54,12 @@ class AnalogSoilMoistureSensor(Device):
             self._last_moisture = moisture
             return True
 
-        if self.device_config.threshold.type == "time":
-            # TODO
+        if self.device_config.threshold.type == "time/seconds":
             read = ticks_ms()
-            if abs(ticks_diff(read, self._last_read)) > self.device_config.threshold.value:
+            time_allows_update = abs(ticks_diff(read, self._last_read)) > self.device_config.threshold.value
+            if time_allows_update:
                 self._last_read = read
-                return True
+                return moisture != self._last_moisture
 
         if self.device_config.threshold.type == "percent":
             if abs(self._last_moisture - moisture) > self.device_config.threshold.value:
@@ -64,10 +69,11 @@ class AnalogSoilMoistureSensor(Device):
         return False
 
     def _calculate_moisture(self):
-        moistures = [self._measure_moisture() for _ in range(10)]
-        return sum(moistures) / len(moistures)
+        moisture = [self._measure_moisture() for _ in range(10)]
+        return sum(moisture) / len(moisture)
 
     def _measure_moisture(self):
+        sleep_ms(1)
         value = self._adc.read_u16()
         value = value // 256
         m = -0.5

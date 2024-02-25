@@ -32,15 +32,13 @@ if __name__ == '__main__':
     logger.log_info("Starting parsing configuration.")
 
     try:
-        with open('device_settings.json', 'r') as file:
+        with open(globals.SETTINGS_FILE, 'r') as file:
             json_file = file.read()
 
         config_data = ujson.loads(json_file)
-        # TODO: Add validation to configuration
         config = Configuration(config_data)
 
         logger.log_info("Finished parsing configuration. Updating logger.")
-        # TODO: Update Logger
     except Exception as e:
         logger.log_error(f"Invalid configuration. Please fix configuration. Exception: {str(e)}")
         sys.exit(1)
@@ -61,7 +59,7 @@ if __name__ == '__main__':
                 "test": "test"
             }
             payload = ujson.dumps(test_data)
-            mqtt_client.publish("connection/test/topic", test_data)
+            mqtt_client.publish("connection/test/topic", payload)
 
     except Exception as e:
         logger.log_debug(f"Failed to start mqtt client {e}")

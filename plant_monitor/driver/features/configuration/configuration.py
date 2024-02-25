@@ -42,7 +42,6 @@ class Mqtt:
 class Logs:
     def __init__(self, logs_data):
         self.local = LogType(logs_data.get("Local", {}))
-        self.remote = LogType(logs_data.get("Remote", {}))
 
 
 class LogType:

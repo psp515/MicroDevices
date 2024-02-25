@@ -52,6 +52,27 @@ class DHT11(Device):
             self.logger.log_debug(f"Exception in dht11 temperature sensor loop: {e}")
             self.logger.log_error(f"Dht11 sensor with id {self.id} unexpectedly failed.")
 
+    def get_subscriptions(self):
+        actions = [
+            (self.__generate_topic("temp"), self.__update_temp)
+        ]
+
+        return actions
+
+    def __generate_topic(self, topic):
+        return f"{self.config.base_device_topic}{self.device_config.update_topic}{topic}"
+
+    def __update_temp(self, data, logger):
+        logger.log_debug("Updating temp with data")
+        data = ujson.loads(data)
+
+        if "type" in data and data["type"] == "temp":
+            if "value" in data and data["value"] >= 1:
+                self.device_config.temp_threshold.value = data["value"]
+
+            if "unit" in data and data["unit"] == "C" or data["unit"] == "K" or data["unit"] == "F":
+                self.device_config.temp_threshold.unit = data["unit"]
+
     def _should_update_humidity(self, humidity):
         if self._humidity is None:
             self._humidity = humidity
